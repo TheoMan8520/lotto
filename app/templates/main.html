@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        h1, h2, h3, h4, h5, h6, p {
+            margin: 0;
+          }
+          a {
+            text-decoration: none;
+            margin: 0;
+          }
+          .main {
+            height: 100vh;
+          }
+    </style>
+</head>
+<body>
+    <div class="d-flex flex-column w-100 align-items-center justify-content-center bg-light main">
+        <div class="d-flex card p-2">
+            <h4>Hello</h4>
+        </div>
+    </div>
+    {% comment %} {% block content %}
+    {% endblock %} {% endcomment %}
+    </div>
+</body>
+</html>
