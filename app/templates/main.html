@@ -18,16 +18,65 @@
           .main {
             height: 100vh;
           }
+          .lotto {
+            text-align: center;
+          }
+          .g-10 {
+            gap: 1rem;
+          }
     </style>
 </head>
 <body>
-    <div class="d-flex flex-column w-100 align-items-center justify-content-center bg-light main">
-        <div class="d-flex card p-2">
-            <h4>Hello</h4>
+    <div class="d-flex flex-column w-100 align-items-center justify-content-center bg-light main g-10">
+      {% comment %} {% if result %}
+        <h1>{{ result }}</h1>
+      {% endif %} {% endcomment %}
+      <h1>{{ result }}</h1>
+      <!-- Navigation to each mode -->
+      <ul class="pagination justify-content-center my-2">
+        <li class="page-item">
+          <a class="page-link" href="{% url 'lotto:main_mode' 2 %}">2</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="{% url 'lotto:main_mode' 3 %}">3</a>
+        </li>
+        <!-- <li class="page-item">
+          <a class="page-link" href="{% url 'lotto:main_mode' 4 %}">4</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="{% url 'lotto:main_mode' 5 %}">5</a>
+        </li> -->
+        <li class="page-item">
+          <a class="page-link" href="{% url 'lotto:main_mode' 6 %}">6</a>
+        </li>
+      </ul>
+      <!-- Input Lotto -->
+      <form action="{% url 'lotto:main_mode' mode %}" method="GET" class="d-flex flex-column align-items-center g-10">
+        {% csrf_token %}
+        <div class="d-flex g-10">
+          {% if mode == 6 %}
+            <input name="first" value="{{ first }}" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+          {% endif %}
+          {% if mode >= 5 %}
+            <input name="second" value="{{ second }}" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+          {% endif %}
+          {% if mode >= 4 %}
+            <input name="third" value="{{ third }}" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+          {% endif %}
+          {% if mode >= 3 %}
+            <input name="fourth" value="{{ fourth }}" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+          {% endif %}
+          {% if mode >= 2 %}
+            <input name="fifth" value="{{ fifth }}" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+            <input name="sixth" value="{{ sixth }}" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+          {% endif %}
         </div>
-    </div>
-    {% comment %} {% block content %}
-    {% endblock %} {% endcomment %}
+        <button title="submit_form" type="submit" class="btn btn-primary px-3 py-2"><h5>Query</h5></button>
+      </form>
     </div>
 </body>
 </html>
+
+<script>
+  var mode = 2;
+</script>
