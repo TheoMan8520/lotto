@@ -1,11 +1,12 @@
+from django.db import connection
 from django.shortcuts import render
 from django.views import View
 
 
 class MainView(View):
     template_name = 'main.html'
-    def get(self, request, mode = 2):
-        result = ""
+    def get(self, request, mode = 2, query = False):
+        stats = []
         sixth = request.GET.get("sixth")
         fifth = request.GET.get("fifth")
         fourth = request.GET.get("fourth")
@@ -13,17 +14,25 @@ class MainView(View):
         second = request.GET.get("second")
         first = request.GET.get("first")
         if(mode == 2 and sixth and fifth):
-            result="2ja"
-            # use query statement to trigger programable object
+            query = True
+            lotto = str(fifth) + str(sixth)
+            stats = get_stats(lotto)
         elif(mode == 3 and sixth and fifth and fourth):
-            result="3ja"
-            # use query statement to trigger programable object
+            query = True
+            lotto = str(fourth) + str(fifth) + str(sixth)
+            stats = get_stats(lotto)
+        elif(mode == 5 and sixth and fifth and fourth and third and second):
+            query = True
+            lotto = str(second) + str(third) + str(fourth) + str(fifth) + str(sixth)
+            stats = get_stats(lotto)
         elif(mode == 6 and sixth and fifth and fourth and third and second and first):
-            result="6ja"
-            # use query statement to trigger programable object
+            query = True
+            lotto = str(first) + str(second) + str(third) + str(fourth) + str(fifth) + str(sixth)
+            stats = get_stats(lotto)
         ctx = {
             "mode": mode,
-            "result": result,
+            "stats": stats,
+            "query": query,
             "sixth": sixth,
             "fifth": fifth,
             "fourth": fourth,
@@ -33,3 +42,9 @@ class MainView(View):
         }
         return render(request, self.template_name, ctx)
 
+def get_stats(lotto):
+    with connection.cursor() as cursor:
+        cursor.execute(" CALL getLottoStats(%s)", (lotto,))
+        result = cursor.fetchall()
+    stats = [{"type": row[0], "count": row[1]} for row in result]
+    return stats
