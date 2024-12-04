@@ -4,6 +4,22 @@
 *รางวัลเลขหน้า 3 ตัวและรางวัลที่ 2 จะมีจำนวนงวดทั้งหมดน้อยกว่า เนื่องจากเกิดขึ้นที่หลัง
 
 ## ตั้งค่า database
+0. สร้าง connection ตาม lab 11 และ เข้าไปแก้ตัวแปรตามเครื่องตัวเองที่ settings ใน lotto ตามส่วนของโค้ดด้านล่าง
+```bash
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'lotto',
+        'USER': 'root',
+        'PASSWORD': 'new_password',
+        'PORT':'3306',
+        'HOST': '127.0.0.1',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
+    }
+}
+```
 1. ปรับเปลี่ยน database collation ให้เป็น utf8mb4_unicode_ci เพื่อให้สามารถรองรับภาษาไทยได้
 2. import ไฟล์ lotto_all.csv ผ่าน Table data import wizard ***และเปลี่ยนประเภทข้อมูล lotto ให้เป็น text
 3. สร้าง stored procedure ด้วยโค้ดข้างล่าง
