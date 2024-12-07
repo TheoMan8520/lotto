@@ -5,6 +5,12 @@ from django.views import View
 
 class MainView(View):
     template_name = 'main.html'
+    def get(self, request):
+        ctx = {}
+        return render(request, self.template_name, ctx)
+    
+class StatView(View):
+    template_name = 'lotto_stat.html'
     def get(self, request, mode = 2, query = False):
         stats = []
         sixth = request.GET.get("sixth")
