@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+        h1, h2, h3, h4, h5, h6, p {
+            margin: 0;
+          }
+          a {
+            text-decoration: none;
+            margin: 0;
+          }
+          .lotto {
+            text-align: center;
+          }
+          .g-10 {
+            gap: 1rem;
+          }
+          .g-05 {
+            gap: 0.5rem;
+          }
+          .header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+          }
+    </style>
+</head>
+<body>
+    <div class="header d-flex w-100 p-3 bg-primary align-items-center">
+        <a href="{% url 'lotto:main' %}"><h3 class="text-white">Thai Pools Lottery</h3></a>
+        <div class="d-flex ms-auto g-10 align-items-center">
+            <h6 class="text-white">ซื้อลอตเตอรี่</h6>
+            <h6 class="text-white">คำสั่งซื้อ</h6>
+            <h6 class="text-white">เข้าสู่ระบบ/สมัครสมาชิก</h6>
+        </div>
+    </div>
+    <div class="d-flex flex-column align-items-center bg-light">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
