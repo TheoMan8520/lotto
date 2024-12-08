@@ -1,7 +1,64 @@
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import AuthenticationForm
 from django.db import connection
-from django.shortcuts import render
+from django.http import Http404, HttpResponse
+from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
+                              redirect, render)
+from django.urls import reverse_lazy
 from django.views import View
 
+from .forms import SignUpForm
+
+
+def signup_method(request):
+    template_name = 'signup.html'
+    success_url=reverse_lazy('lotto:main')
+    if request.user.is_anonymous:
+        if request.method == "POST":
+            form = SignUpForm(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data.get('username')
+                password = form.cleaned_data.get('password1')
+                form.save()
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return redirect(success_url)
+            else:
+                errors = form.errors.items()
+                form = SignUpForm()
+                context = {
+                    'form': form, 'errors' : errors
+                }
+                return render(request, template_name, context)
+    else:
+        return redirect(success_url)
+    form = SignUpForm()
+    context = {
+        'form': form
+    }
+    return render(request, template_name, context)
+
+def login_method(request):
+    template_name = 'login.html'
+    success_url=reverse_lazy('lotto:main')
+    if request.user.is_anonymous:
+        if request.method == "POST":
+            form = AuthenticationForm(request, data=request.POST)
+            if form.is_valid():
+                username = form.cleaned_data.get("username")
+                password = form.cleaned_data.get("password")
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return redirect(success_url)
+    else:
+        return redirect(success_url)
+    form = AuthenticationForm()
+    context = {
+        "form": form
+    }
+    return render(request, template_name, context)
 
 class MainView(View):
     template_name = 'main.html'

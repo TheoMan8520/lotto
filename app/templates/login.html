@@ -1,0 +1,22 @@
+{% extends "header.html" %}
+{% block content %}
+{% if errors %}
+  {% for error in errors %}
+    <p>{{ error }}</p>
+  {% endfor %}
+{% endif %}
+<form method="POST" actione="." id="login-form" class="d-flex flex-column w-100 align-items-center g-05 p-4">
+    {% csrf_token %}
+    <div class="form-floating">
+        <input required type="text" class="form-control" placeholder="Username" id="username" name="username" maxlength="16" minlength="4">
+        <label for="username">Username</label>
+    </div>
+    <div class="form-floating">
+        <input required type="password" class="form-control" placeholder="Password" id="password" name="password">
+        <label for="password">Password</label>
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+    <a href="{% url 'lotto:signup' %}">Don't have an account?</a>
+</form>
+  
+{% endblock %}
