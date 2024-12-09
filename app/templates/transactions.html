@@ -2,6 +2,7 @@
 {% block content %}
   {% if user.is_authenticated %}
     <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
+        <h3>Transactions</h3>
         {% if transactions %}
             {% for transaction in transactions %}
                 <div class="card d-flex flex-column align-items-center">
@@ -9,12 +10,12 @@
                         <h6>{{ transaction.created_at.date }}</h6>
                     </div>
                     <div class="card-body d-flex flex-column align-items-center">
-                        <form action="{% url 'lotto:confirm_buy_lotto' %}" method="POST" class="d-flex flex-column align-items-center g-10">
+                        <form action="{% url 'lotto:confirm_buy_lotto' %}" method="POST" class="d-flex flex-column align-items-start g-10 p-3">
                             {% csrf_token %}
-                            <p>user: {{ transaction.user.username }}</p>
+                            <p>ผู้ซื้อ: {{ transaction.user.username }}</p>
                             <p>lotto: {{ transaction.lotto }}</p>
-                            <p>share: {{ transaction.share }}</p>
-                            <p>status: {{ transaction.status }}</p>
+                            <p>จำนวนหุ้น: {{ transaction.share }}</p>
+                            <p>สถานะการสั่งซื้อ: {{ transaction.status }}</p>
                         </form>
                     </div>
                 </div>
