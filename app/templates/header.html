@@ -29,6 +29,9 @@
             top: 0;
             z-index: 1;
           }
+          body {
+            height: 100vh;
+          }
     </style>
     {% block head %} {% endblock %}
 </head>
@@ -45,7 +48,7 @@
           {% endif %}
         </div>
     </div>
-    <div class="d-flex flex-column align-items-center bg-light">
+    <div class="d-flex flex-column align-items-center bg-light body-section h-100 pt-5">
         {% block content %}
         {% endblock %}
     </div>
