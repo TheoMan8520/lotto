@@ -125,15 +125,23 @@ class TransactionView(View):
     home=reverse_lazy('lotto:main')
     def get(self, request):
         if request.user.is_superuser:
-            transactions = Transaction.objects.all()
+            # transactions = Transaction.objects.all()
+            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน")
+            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ")
             ctx = {
-                "transactions": transactions
+                # "transactions": transactions
+                "pending_transactions": pending_transactions,
+                "successful_transactions": successful_transactions
             }
             return render(request, self.template_name, ctx)
         elif request.user.is_authenticated:
-            transactions = request.user.transactions.all()
+            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน")
+            successful_transactions = request.user.transactions.filter(status="คำสั่งซื้อสำเร็จ")
+            # transactions = request.user.transactions.all()
             ctx = {
-                "transactions": transactions
+                # "transactions": transactions
+                "pending_transactions": pending_transactions,
+                "successful_transactions": successful_transactions
             }
             return render(request, self.template_name, ctx)
         else:
