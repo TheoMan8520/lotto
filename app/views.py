@@ -98,31 +98,14 @@ class ConfirmBuyLottoView(View):
     
     def post(self, request):
         if request.user.is_authenticated:
-            # form = TransactionForm(request.POST)
-            # if form.is_valid():
-            #     form.save()
-            #     return redirect(self.success_url)
-            # else:
-                # errors = form.errors.items()
-                # ctx = {
-                #     "errors": errors
-                # }
-                # return render(request, self.template_name, ctx)
-            print("post is called")
             user = request.user
             lotto = request.POST.get("lotto")
             share = request.POST.get("share")
-            print("request.POST:", request.POST)
-            print("user:", user)
-            print("lotto:", lotto)
-            print("share:", share)
             if (user and lotto and share):
-                print("got in")
                 transaction = Transaction(user=user, lotto=lotto, share=share)
                 transaction.save()
                 return redirect(self.success_url)
             else:
-                print("else")
                 errors = ["Required inputs are not filled"]
                 ctx = {
                     "errors": errors
@@ -133,16 +116,31 @@ class ConfirmBuyLottoView(View):
     
 class TransactionView(View):
     template_name = 'transactions.html'
-    success_url=reverse_lazy('lotto:main')
+    success_url=reverse_lazy('lotto:transactions')
+    home=reverse_lazy('lotto:main')
     def get(self, request):
-        if request.user.is_authenticated:
+        if request.user.is_superuser:
+            transactions = Transaction.objects.all()
+            ctx = {
+                "transactions": transactions
+            }
+            return render(request, self.template_name, ctx)
+        elif request.user.is_authenticated:
             transactions = request.user.transactions.all()
             ctx = {
                 "transactions": transactions
             }
             return render(request, self.template_name, ctx)
         else:
+            return redirect(self.home)
+    def post(self, request, pk):
+        if request.user.is_superuser:
+            transaction = get_object_or_404(Transaction, id=pk)
+            transaction.status = "คำสั่งซื้อสำเร็จ"
+            transaction.save()
             return redirect(self.success_url)
+        else:
+            return redirect(self.home)
 
 class StatView(View):
     template_name = 'lotto_stat.html'
