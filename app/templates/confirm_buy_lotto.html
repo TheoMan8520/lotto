@@ -1,0 +1,40 @@
+{% extends "header.html" %}
+{% block head %}
+    <style>
+        input, input:focus, input:disabled, textarea, textarea:focus, textarea:disabled {
+            outline: none;
+            border: none;
+            box-shadow: none;
+            color: inherit;
+            background-color: inherit;
+          }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
+        {% if errors %}
+            {% for error in erros %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+        {% if user.is_authenticated %}
+            <div class="card d-flex flex-column align-items-center">
+                <div class="card-header w-100 p-3">
+                    <h5>สรุปคำสั่งซื้อ</h5>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center">
+                    <form action="{% url 'lotto:confirm_buy_lotto' %}" method="POST" class="d-flex flex-column align-items-center g-10">
+                        {% csrf_token %}
+                        <h5>Lotto: {{ lotto }}</h5>
+                        <h5>จำนวน: {{ share }}</h5>
+                        <h5>total: {{ total }} บาท</h5>
+                        <div class="d-flex btn btn-light px-3 py-2"><h5>แสร้งว่าชำระเงิน</h5></div>
+                        <input type="hidden" name="lotto" placeholder="lotto" value="{{ lotto }}" class="h5 m-0">
+                        <input type="hidden" name="share" placeholder="share" value="{{ share }}" class="h5 m-0">
+                        <button title="submit_form" type="submit" class="btn btn-primary px-3 py-2"><h5>แจ้งชำระเงิน</h5></button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

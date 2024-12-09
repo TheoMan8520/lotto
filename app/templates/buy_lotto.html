@@ -1,0 +1,27 @@
+{% extends "header.html" %}
+{% block content %}
+    <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
+        {% if user.is_authenticated %}
+            <div class="card d-flex flex-column align-items-center">
+                <div class="card-header w-100 p-3">
+                    <h5>งวดวันที่ 16 ธันวาคม 2567</h5>
+                </div>
+                <div class="card-body d-flex flex-column align-items-center">
+                    <form action="{% url 'lotto:confirm_buy_lotto' %}" method="GET" class="d-flex flex-column align-items-center g-10">
+                        {% csrf_token %}
+                        <div class="d-flex g-10">
+                            <input name="fourth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+                            <input name="fifth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+                            <input name="sixth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+                        </div>
+                        <div class="d-flex g-10 align-items-center">
+                            <h5>จำนวนหุ้น (หุ้นละ 80 บาท):</h5>
+                            <input name="share" required type="number" min="1" max="10" placeholder="0" class="lotto h4 card p-2">
+                        </div>
+                        <button title="submit_form" type="submit" class="btn btn-primary px-3 py-2"><h5>ยืนยันคำสั่งซื้อและแจ้งชำระเงิน</h5></button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

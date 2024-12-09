@@ -7,7 +7,8 @@ from django.shortcuts import (HttpResponseRedirect, get_object_or_404,
 from django.urls import reverse_lazy
 from django.views import View
 
-from .forms import SignUpForm
+from .forms import SignUpForm, TransactionForm
+from .models import Transaction
 
 
 def signup_method(request):
@@ -66,8 +67,86 @@ class MainView(View):
         ctx = {}
         return render(request, self.template_name, ctx)
     
+class BuyLottoView(View):
+    template_name = 'buy_lotto.html'
+    success_url=reverse_lazy('lotto:main')
+    def get(self, request):
+        if request.user.is_authenticated:
+            ctx = {}
+            return render(request, self.template_name, ctx)
+        else:
+            return redirect(self.success_url)
+    
+class ConfirmBuyLottoView(View):
+    template_name = 'confirm_buy_lotto.html'
+    success_url=reverse_lazy('lotto:transactions')
+    home = reverse_lazy('lotto:main')
+    def get(self, request):
+        if request.user.is_authenticated:
+            sixth = request.GET.get("sixth")
+            fifth = request.GET.get("fifth")
+            fourth = request.GET.get("fourth")
+            share = request.GET.get("share")
+            ctx = {
+                "lotto": fourth+fifth+sixth,
+                "share": share,
+                "total": int(share)*80
+            }
+            return render(request, self.template_name, ctx)
+        else:
+            return redirect(self.home)
+    
+    def post(self, request):
+        if request.user.is_authenticated:
+            # form = TransactionForm(request.POST)
+            # if form.is_valid():
+            #     form.save()
+            #     return redirect(self.success_url)
+            # else:
+                # errors = form.errors.items()
+                # ctx = {
+                #     "errors": errors
+                # }
+                # return render(request, self.template_name, ctx)
+            print("post is called")
+            user = request.user
+            lotto = request.POST.get("lotto")
+            share = request.POST.get("share")
+            print("request.POST:", request.POST)
+            print("user:", user)
+            print("lotto:", lotto)
+            print("share:", share)
+            if (user and lotto and share):
+                print("got in")
+                transaction = Transaction(user=user, lotto=lotto, share=share)
+                transaction.save()
+                return redirect(self.success_url)
+            else:
+                print("else")
+                errors = ["Required inputs are not filled"]
+                ctx = {
+                    "errors": errors
+                }
+                return render(request, self.template_name, ctx)
+        else:
+            return redirect(self.home)
+    
+class TransactionView(View):
+    template_name = 'transactions.html'
+    success_url=reverse_lazy('lotto:main')
+    def get(self, request):
+        if request.user.is_authenticated:
+            transactions = request.user.transactions.all()
+            ctx = {
+                "transactions": transactions
+            }
+            return render(request, self.template_name, ctx)
+        else:
+            return redirect(self.success_url)
+
 class StatView(View):
     template_name = 'lotto_stat.html'
+    success_url=reverse_lazy('lotto:main')
     def get(self, request, mode = 2, query = False):
         stats = []
         sixth = request.GET.get("sixth")
