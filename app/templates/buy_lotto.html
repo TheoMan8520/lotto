@@ -22,6 +22,34 @@
                     </form>
                 </div>
             </div>
+            <div class="d-flex g-10">
+                <!-- รอยืนยัน -->
+                <div class="card">
+                    <div class="card-header">
+                        Pending Lotto
+                    </div>
+                    <div class="card-body">
+                        {% if pending_transactions %}
+                            {% for transaction in pending_transactions %}
+                                <p>{{ transaction.lotto }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- สำเร็จแล้ว -->
+                <div class="card">
+                    <div class="card-header">
+                        Bought Lotto
+                    </div>
+                    <div class="card-body">
+                        {% if successful_transactions %}
+                            {% for transaction in successful_transactions %}
+                                <p>{{ transaction.lotto }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
 {% endblock %}

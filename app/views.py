@@ -72,7 +72,12 @@ class BuyLottoView(View):
     success_url=reverse_lazy('lotto:main')
     def get(self, request):
         if request.user.is_authenticated:
-            ctx = {}
+            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ")
+            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน")
+            ctx = {
+                "successful_transactions": successful_transactions,
+                "pending_transactions": pending_transactions
+            }
             return render(request, self.template_name, ctx)
         else:
             return redirect(self.success_url)
