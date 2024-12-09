@@ -70,13 +70,16 @@ class MainView(View):
 class BuyLottoView(View):
     template_name = 'buy_lotto.html'
     success_url=reverse_lazy('lotto:main')
-    def get(self, request):
+    def get(self, request, error = ""):
         if request.user.is_authenticated:
+            bought_lottos = request.user.transactions.all().values_list('lotto', flat=True)
             successful_transactions = get_successful_lottos()
             pending_transactions = get_pending_lottos()
             ctx = {
                 "successful_transactions": successful_transactions,
-                "pending_transactions": pending_transactions
+                "pending_transactions": pending_transactions,
+                "bought_lottos": bought_lottos,
+                "error": error
             }
             return render(request, self.template_name, ctx)
         else:
@@ -92,12 +95,17 @@ class ConfirmBuyLottoView(View):
             fifth = request.GET.get("fifth")
             fourth = request.GET.get("fourth")
             share = request.GET.get("share")
-            ctx = {
-                "lotto": fourth+fifth+sixth,
-                "share": share,
-                "total": int(share)*80
-            }
-            return render(request, self.template_name, ctx)
+            lotto = fourth+fifth+sixth
+            pool = request.user.transactions.all().values_list('lotto', flat=True)
+            if lotto in pool:
+                return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'error': lotto+" is already bought."}))
+            else:
+                ctx = {
+                    "lotto": lotto,
+                    "share": share,
+                    "total": int(share)*80
+                }
+                return render(request, self.template_name, ctx)
         else:
             return redirect(self.home)
     
