@@ -26,12 +26,12 @@
                 <!-- รอยืนยัน -->
                 <div class="card">
                     <div class="card-header">
-                        Pending Lotto
+                        Pending Lotto (Shares)
                     </div>
                     <div class="card-body">
                         {% if pending_transactions %}
                             {% for transaction in pending_transactions %}
-                                <p>{{ transaction.lotto }}</p>
+                                <p>{{ transaction.lotto }} ({{ transaction.count }})</p>
                             {% endfor %}
                         {% endif %}
                     </div>
@@ -39,12 +39,12 @@
                 <!-- สำเร็จแล้ว -->
                 <div class="card">
                     <div class="card-header">
-                        Bought Lotto
+                        Bought Lotto (Shares)
                     </div>
                     <div class="card-body">
                         {% if successful_transactions %}
                             {% for transaction in successful_transactions %}
-                                <p>{{ transaction.lotto }}</p>
+                            <p>{{ transaction.lotto }} ({{ transaction.count }})</p>
                             {% endfor %}
                         {% endif %}
                     </div>

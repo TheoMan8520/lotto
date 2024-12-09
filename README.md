@@ -51,6 +51,26 @@ BEGIN
 		type;
 END
 ```
+```bash
+CREATE PROCEDURE `getPendingLottos` ()
+BEGIN
+	select lotto, sum(share) as count 
+    from app_transaction
+    where status = "รอการยืนยันการชำระเงิน"
+    group by lotto
+    order by count desc;
+END
+```
+```bash
+CREATE PROCEDURE `getSuccessfulLottos` ()
+BEGIN
+	select lotto, sum(share) as count 
+    from app_transaction
+    where status = "คำสั่งซื้อสำเร็จ"
+    group by lotto
+    order by count desc;
+END
+```
 
 ## information: lotto_data
 มี raw ไฟล์ผลรางวัลอยู่ และไฟล์ restructure.py ที่ใช้สร้าง lotto_all.csv โดยมีโครงสร้างคือ date, lotto, type เพื่อให้สามารถนับได้สะดวก

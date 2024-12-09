@@ -72,8 +72,8 @@ class BuyLottoView(View):
     success_url=reverse_lazy('lotto:main')
     def get(self, request):
         if request.user.is_authenticated:
-            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ")
-            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน")
+            successful_transactions = get_successful_lottos()
+            pending_transactions = get_pending_lottos()
             ctx = {
                 "successful_transactions": successful_transactions,
                 "pending_transactions": pending_transactions
@@ -199,5 +199,23 @@ def get_stats(lotto):
     with connection.cursor() as cursor:
         cursor.execute(" CALL getLottoStats(%s)", (lotto,))
         result = cursor.fetchall()
+    # result alone card rebel
     stats = [{"type": row[0], "count": row[1]} for row in result]
     return stats
+
+def get_pending_lottos():
+    with connection.cursor() as cursor:
+        cursor.execute(" CALL getPendingLottos()")
+        result = cursor.fetchall()
+    # result alone card rebel
+    stats = [{"lotto": row[0], "count": row[1]} for row in result]
+    return stats
+
+def get_successful_lottos():
+    with connection.cursor() as cursor:
+        cursor.execute(" CALL getSuccessfulLottos()")
+        result = cursor.fetchall()
+    # result alone card rebel
+    stats = [{"lotto": row[0], "count": row[1]} for row in result]
+    return stats
+
