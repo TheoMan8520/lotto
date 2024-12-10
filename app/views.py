@@ -92,11 +92,15 @@ class BuyLottoView(View):
     success_url=reverse_lazy('lotto:main')
     def get(self, request, room, error = ""):
         if request.user.is_authenticated:
+            shares = get_shares_room(room)
+            disabled = True if shares == 50 else False
             bought_lottos = request.user.transactions.filter(room = room, is_active=True).values_list('lotto', flat=True)
             pending_transactions = get_pending_lottos(room)
             successful_transactions = get_successful_lottos(room)
             ctx = {
                 "room": room,
+                "shares": shares,
+                "disabled": disabled,
                 "successful_transactions": successful_transactions,
                 "pending_transactions": pending_transactions,
                 "bought_lottos": bought_lottos,
@@ -117,9 +121,16 @@ class ConfirmBuyLottoView(View):
             fourth = request.GET.get("fourth")
             share = request.GET.get("share")
             lotto = fourth+fifth+sixth
-            pool = request.user.transactions.all().values_list('lotto', flat=True)
-            if lotto in pool:
-                return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'error': lotto+" is already bought."}))
+            shares_room = get_shares_room(room)
+            shares_lotto = get_shares_lotto(room)
+            # ในห้องจะต้องไม่เกิน 50
+            check_shares_room = (share+shares_room > 50)
+            # เลขนี้ในทุกห้องต้องไม่เกิน 50
+            check_shares_lotto = (share+shares_lotto > 50)
+            pool = request.user.transactions.filter(is_active = True, room = room).values_list('lotto', flat=True)
+            if lotto in pool or check_shares_room or check_shares_lotto:
+                # return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'error': lotto+" is already bought."}))
+                return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'room': room}))
             else:
                 ctx = {
                     "room": room,
@@ -262,3 +273,14 @@ def get_successful_lottos(room):
     stats = [{"lotto": row[0], "count": row[1]} for row in result]
     return stats
 
+def get_shares_room(room):
+    with connection.cursor() as cursor:
+        cursor.execute("CALL transRoomSum(%s)", (room,))
+        result = cursor.fetchone()
+    return result[0]
+
+def get_shares_lotto(lotto):
+    with connection.cursor() as cursor:
+        cursor.execute("CALL transLottoSum(%s)", (lotto,))
+        result = cursor.fetchone()
+    return result[0]

@@ -2,46 +2,50 @@
 {% block content %}
     <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
         {% if user.is_authenticated %}
-            <h4>Room {{ room }}</h4>
+            <h4>Room {{ room }} ({{ shares }}/50)</h4>
             <div class="card d-flex flex-column align-items-center">
                 <div class="card-header w-100 p-3">
                     <h5>งวดวันที่ 16 ธันวาคม 2567</h5>
                 </div>
                 <div class="card-body d-flex flex-column align-items-center p-5">
-                    <form action="{% url 'lotto:confirm_buy_lotto' room %}" method="GET" class="d-flex flex-column align-items-center g-10">
-                        {% csrf_token %}
-                        {% if error %}
-                            <div class="d-flex flex-column g-05">
-                                <div class="alert alert-danger m-0">
-                                    {{ error }}
-                                </div>
-                                <div class="alert alert-danger m-0">
-                                    You can not buy/change lotto you already bought
-                                </div>
-                            </div>
-                        {% endif %}
-                        <div class="d-flex g-10">
-                            <input name="fourth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
-                            <input name="fifth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
-                            <input name="sixth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
-                        </div>
-                        <div class="d-flex g-10 align-items-center">
-                            <h5>จำนวนหุ้น (หุ้นละ 80 บาท):</h5>
-                            <input name="share" required type="number" min="1" max="10" placeholder="0" class="lotto h4 card p-2">
-                        </div>
-                        <button title="submit_form" type="submit" class="btn btn-primary px-4 py-3">ยืนยันคำสั่งซื้อและแจ้งชำระเงิน</button>
-                        <div class="d-flex flex-column g-05">
-                            <p class="mt-auto">*You can not buy/change lotto you already bought</p>
-                            {% if bought_lottos %}
-                                <p>Lotto you bought:</p>
-                                <div class="d-flex flex-row g-05 overflow-scroll text-nowrap" style="width: 335px;">
-                                    {% for lotto in bought_lottos %}
-                                        <p>{{ lotto }}</p>
-                                    {% endfor %}
+                    {% if disabled %}
+                        Shares are already met limit (50)
+                    {% else %}
+                        <form action="{% url 'lotto:confirm_buy_lotto' room %}" method="GET" class="d-flex flex-column align-items-center g-10">
+                            {% csrf_token %}
+                            {% if error %}
+                                <div class="d-flex flex-column g-05">
+                                    <div class="alert alert-danger m-0">
+                                        {{ error }}
+                                    </div>
+                                    <div class="alert alert-danger m-0">
+                                        You can not buy/change lotto you already bought
+                                    </div>
                                 </div>
                             {% endif %}
-                        </div>
-                    </form>
+                            <div class="d-flex g-10">
+                                <input name="fourth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+                                <input name="fifth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+                                <input name="sixth" required type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-2">
+                            </div>
+                            <div class="d-flex g-10 align-items-center">
+                                <h5>จำนวนหุ้น (หุ้นละ 80 บาท):</h5>
+                                <input name="share" required type="number" min="1" max="10" placeholder="0" class="lotto h4 card p-2">
+                            </div>
+                            <button title="submit_form" type="submit" class="btn btn-primary px-4 py-3">ยืนยันคำสั่งซื้อและแจ้งชำระเงิน</button>
+                            <div class="d-flex flex-column g-05">
+                                <p class="mt-auto">*You can not buy/change lotto you already bought</p>
+                                {% if bought_lottos %}
+                                    <p>Lotto you bought:</p>
+                                    <div class="d-flex flex-row g-05 overflow-scroll text-nowrap" style="width: 335px;">
+                                        {% for lotto in bought_lottos %}
+                                            <p>{{ lotto }}</p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </form>
+                    {% endif %}
                 </div>
             </div>
             <div class="d-flex g-10">
