@@ -34,6 +34,12 @@
             </div>
         {% else %}
             <h5>No pending transactions</h5>
+            {% if user.is_superuser %}
+                <form action="{% url 'lotto:transactions' 0 %}" method="POST">
+                    {% csrf_token %}
+                    <button name="flush" type="submit" class="btn btn-primary px-3 py-2" value="1">Flush all</button>
+                </form>
+            {% endif %}
         {% endif %}
 
         <!-- Successful transactions -->

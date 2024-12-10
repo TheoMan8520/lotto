@@ -134,8 +134,8 @@ class TransactionView(View):
     def get(self, request):
         if request.user.is_superuser:
             old_transactions = Transaction.objects.filter(is_active=False)
-            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน") | Transaction.objects.filter(status="การชำระเงินไม่สำเร็จ")
-            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ")
+            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน", is_active=True) | Transaction.objects.filter(status="การชำระเงินไม่สำเร็จ", is_active=True)
+            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ", is_active=True)
             ctx = {
                 "old_transactions": old_transactions,
                 "pending_transactions": pending_transactions,
@@ -144,8 +144,8 @@ class TransactionView(View):
             return render(request, self.template_name, ctx)
         elif request.user.is_authenticated:
             old_transactions = request.user.transactions.filter(is_active=False)
-            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน") | request.user.transactions.filter(status="การชำระเงินไม่สำเร็จ")
-            successful_transactions = request.user.transactions.filter(status="คำสั่งซื้อสำเร็จ")
+            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน", is_active=True) | request.user.transactions.filter(status="การชำระเงินไม่สำเร็จ", is_active=True)
+            successful_transactions = request.user.transactions.filter(status="คำสั่งซื้อสำเร็จ", is_active=True)
             ctx = {
                 "old_transactions": old_transactions,
                 "pending_transactions": pending_transactions,
@@ -157,15 +157,21 @@ class TransactionView(View):
         
     def post(self, request, pk):
         if request.user.is_superuser:
-            transaction = get_object_or_404(Transaction, id=pk)
-            response = request.POST.get("response")
-            print("response", response)
-            if response == "1":
-                transaction.status = "คำสั่งซื้อสำเร็จ"
-                transaction.save()
+            flush = request.POST.get("flush")
+            if flush:
+                transactions = Transaction.objects.filter(is_active=True)
+                for transaction in transactions:
+                    transaction.is_active = False
+                    transaction.save()
             else:
-                transaction.status = "การชำระเงินไม่สำเร็จ"
-                transaction.save()
+                transaction = get_object_or_404(Transaction, id=pk)
+                response = request.POST.get("response")
+                if response == "1":
+                    transaction.status = "คำสั่งซื้อสำเร็จ"
+                    transaction.save()
+                else:
+                    transaction.status = "การชำระเงินไม่สำเร็จ"
+                    transaction.save()
             return redirect(self.success_url)
         else:
             return redirect(self.home)
