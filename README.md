@@ -77,26 +77,6 @@ BEGIN
     order by count desc;
 END
 ```
-```bash
-CREATE PROCEDURE `transRoomSum` (
-	IN room_in int(1)
-)
-BEGIN
-	select sum(share) as count
-    from app_transaction
-    where room = room_in and is_active = True;
-END
-```
-```bash
-CREATE PROCEDURE `transLottoSum` (
-	IN lotto_num int(3)
-)
-BEGIN
-	select sum(share) as count
-    from app_transaction
-    where lotto = lotto_num and is_active = True;
-END
-```
 
 ## information: lotto_data
 มี raw ไฟล์ผลรางวัลอยู่ และไฟล์ restructure.py ที่ใช้สร้าง lotto_all.csv โดยมีโครงสร้างคือ date, lotto, type เพื่อให้สามารถนับได้สะดวก
