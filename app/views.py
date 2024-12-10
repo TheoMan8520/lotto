@@ -133,32 +133,39 @@ class TransactionView(View):
     home=reverse_lazy('lotto:main')
     def get(self, request):
         if request.user.is_superuser:
-            # transactions = Transaction.objects.all()
-            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน")
+            old_transactions = Transaction.objects.filter(is_active=False)
+            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน") | Transaction.objects.filter(status="การชำระเงินไม่สำเร็จ")
             successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ")
             ctx = {
-                # "transactions": transactions
+                "old_transactions": old_transactions,
                 "pending_transactions": pending_transactions,
                 "successful_transactions": successful_transactions
             }
             return render(request, self.template_name, ctx)
         elif request.user.is_authenticated:
-            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน")
+            old_transactions = request.user.transactions.filter(is_active=False)
+            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน") | request.user.transactions.filter(status="การชำระเงินไม่สำเร็จ")
             successful_transactions = request.user.transactions.filter(status="คำสั่งซื้อสำเร็จ")
-            # transactions = request.user.transactions.all()
             ctx = {
-                # "transactions": transactions
+                "old_transactions": old_transactions,
                 "pending_transactions": pending_transactions,
                 "successful_transactions": successful_transactions
             }
             return render(request, self.template_name, ctx)
         else:
             return redirect(self.home)
+        
     def post(self, request, pk):
         if request.user.is_superuser:
             transaction = get_object_or_404(Transaction, id=pk)
-            transaction.status = "คำสั่งซื้อสำเร็จ"
-            transaction.save()
+            response = request.POST.get("response")
+            print("response", response)
+            if response == "1":
+                transaction.status = "คำสั่งซื้อสำเร็จ"
+                transaction.save()
+            else:
+                transaction.status = "การชำระเงินไม่สำเร็จ"
+                transaction.save()
             return redirect(self.success_url)
         else:
             return redirect(self.home)

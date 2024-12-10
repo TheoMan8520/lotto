@@ -3,6 +3,7 @@
   {% if user.is_authenticated %}
     <div class="d-flex flex-column w-100 h-100 align-items-center g-10 p-2">
         <h3>Transactions</h3>
+        <!-- Pending transactions -->
         <h4 class="w-100">Pending transactions:</h4>
         {% if pending_transactions %}
             <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
@@ -19,8 +20,12 @@
                                 <p>lotto: {{ transaction.lotto }}</p>
                                 <p>จำนวนหุ้น: {{ transaction.share }}</p>
                                 <p>สถานะการสั่งซื้อ: {{ transaction.status }}</p>
+                                {% if transaction.status == "การชำระเงินไม่สำเร็จ" and not user.is_superuser%}
+                                    <div class="d-flex btn btn-light px-3 py-2">แสร้งว่าชำระเงินใหม่</div>
+                                {% endif %}
                                 {% if user.is_superuser %}
-                                    <button title="submit_form" type="submit" class="btn btn-primary px-3 py-2">ยืนยันการชำระเงิน</button>
+                                    <button name="response" type="submit" class="btn btn-primary px-3 py-2" value="1">ยืนยันการชำระเงิน</button>
+                                    <button name="response" type="submit" class="btn btn-danger px-3 py-2" value="0">การชำระเงินไม่สำเร็จ</button>
                                 {% endif %}
                             </form>
                         </div>
@@ -30,6 +35,8 @@
         {% else %}
             <h5>No pending transactions</h5>
         {% endif %}
+
+        <!-- Successful transactions -->
         <h4 class="w-100">Successful transactions:</h4>
         {% if successful_transactions %}
             <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
@@ -52,6 +59,31 @@
             </div>
         {% else %}
             <h5>No successful transactions</h5>
+        {% endif %}
+
+        <!-- Old transactions -->
+        <h4 class="w-100">Transactions history</h4>
+        {% if old_transactions %}
+            <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
+                {% for transaction in old_transactions %}
+                    <div class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
+                        <div class="w-100 p-3 border-bottom border-1 bg-light">
+                            <h6>{{ transaction.created_at.date }}</h6>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="d-flex flex-column align-items-start g-10 p-3">
+                                <p>transaction_id: {{ transaction.id }}</p>
+                                <p>ผู้ซื้อ: {{ transaction.user.username }}</p>
+                                <p>lotto: {{ transaction.lotto }}</p>
+                                <p>จำนวนหุ้น: {{ transaction.share }}</p>
+                                <p>สถานะการสั่งซื้อ: {{ transaction.status }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h5>No transactions in the past</h5>
         {% endif %}
     </div>
   {% endif %}
