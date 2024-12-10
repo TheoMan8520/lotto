@@ -8,6 +8,7 @@ class Transaction(models.Model):
     share = models.IntegerField()
     status = models.CharField(max_length=255, default="รอการยืนยันการชำระเงิน")
     is_active = models.BooleanField(default=True)
+    room = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

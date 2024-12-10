@@ -67,15 +67,36 @@ class MainView(View):
         ctx = {}
         return render(request, self.template_name, ctx)
     
+class RoomView(View):
+    template_name = 'rooms.html'
+    def get(self, request):
+        lottos_1 = Transaction.objects.filter(room = 1, is_active=True).values_list('lotto', flat=True)
+        lottos_2 = Transaction.objects.filter(room = 2, is_active=True).values_list('lotto', flat=True)
+        lottos_3 = Transaction.objects.filter(room = 3, is_active=True).values_list('lotto', flat=True)
+        lottos_4 = Transaction.objects.filter(room = 4, is_active=True).values_list('lotto', flat=True)
+        lottos_5 = Transaction.objects.filter(room = 5, is_active=True).values_list('lotto', flat=True)
+        room_lottos = [
+            {"room": 1, "lottos": lottos_1},
+            {"room": 2, "lottos": lottos_2},
+            {"room": 3, "lottos": lottos_3},
+            {"room": 4, "lottos": lottos_4},
+            {"room": 5, "lottos": lottos_5},
+        ]
+        ctx = {
+            "room_lottos": room_lottos
+        }
+        return render(request, self.template_name, ctx)
+
 class BuyLottoView(View):
     template_name = 'buy_lotto.html'
     success_url=reverse_lazy('lotto:main')
-    def get(self, request, error = ""):
+    def get(self, request, room, error = ""):
         if request.user.is_authenticated:
-            bought_lottos = request.user.transactions.all().values_list('lotto', flat=True)
-            successful_transactions = get_successful_lottos()
-            pending_transactions = get_pending_lottos()
+            bought_lottos = request.user.transactions.filter(room = room, is_active=True).values_list('lotto', flat=True)
+            pending_transactions = get_pending_lottos(room)
+            successful_transactions = get_successful_lottos(room)
             ctx = {
+                "room": room,
                 "successful_transactions": successful_transactions,
                 "pending_transactions": pending_transactions,
                 "bought_lottos": bought_lottos,
@@ -89,7 +110,7 @@ class ConfirmBuyLottoView(View):
     template_name = 'confirm_buy_lotto.html'
     success_url=reverse_lazy('lotto:transactions')
     home = reverse_lazy('lotto:main')
-    def get(self, request):
+    def get(self, request, room):
         if request.user.is_authenticated:
             sixth = request.GET.get("sixth")
             fifth = request.GET.get("fifth")
@@ -101,21 +122,22 @@ class ConfirmBuyLottoView(View):
                 return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'error': lotto+" is already bought."}))
             else:
                 ctx = {
+                    "room": room,
                     "lotto": lotto,
                     "share": share,
-                    "total": int(share)*80
+                    "total": int(share)*80,
                 }
                 return render(request, self.template_name, ctx)
         else:
             return redirect(self.home)
     
-    def post(self, request):
+    def post(self, request, room):
         if request.user.is_authenticated:
             user = request.user
             lotto = request.POST.get("lotto")
             share = request.POST.get("share")
             if (user and lotto and share):
-                transaction = Transaction(user=user, lotto=lotto, share=share)
+                transaction = Transaction(user=user, lotto=lotto, share=share, room = room)
                 transaction.save()
                 return redirect(self.success_url)
             else:
@@ -224,17 +246,17 @@ def get_stats(lotto):
     stats = [{"type": row[0], "count": row[1]} for row in result]
     return stats
 
-def get_pending_lottos():
+def get_pending_lottos(room):
     with connection.cursor() as cursor:
-        cursor.execute(" CALL getPendingLottos()")
+        cursor.execute(" CALL getPendingLottos(%s)", (room,))
         result = cursor.fetchall()
     # result alone card rebel
     stats = [{"lotto": row[0], "count": row[1]} for row in result]
     return stats
 
-def get_successful_lottos():
+def get_successful_lottos(room):
     with connection.cursor() as cursor:
-        cursor.execute(" CALL getSuccessfulLottos()")
+        cursor.execute(" CALL getSuccessfulLottos(%s)", (room,))
         result = cursor.fetchall()
     # result alone card rebel
     stats = [{"lotto": row[0], "count": row[1]} for row in result]

@@ -52,22 +52,28 @@ BEGIN
 END
 ```
 ```bash
-CREATE PROCEDURE `getPendingLottos` ()
+CREATE PROCEDURE `getPendingLottos` (
+    IN room int(1)
+)
 BEGIN
 	select lotto, sum(share) as count 
     from app_transaction
-    where status = "รอการยืนยันการชำระเงิน"
-    group by lotto
+    where (status = "รอการยืนยันการชำระเงิน" or status = "การชำระเงินไม่สำเร็จ") and is_active =True
+    group by lotto, room
+    having room = room
     order by count desc;
 END
 ```
 ```bash
-CREATE PROCEDURE `getSuccessfulLottos` ()
+CREATE PROCEDURE `getSuccessfulLottos` (
+    IN room int(1)
+)
 BEGIN
-	select lotto, sum(share) as count 
+    select lotto, sum(share) as count 
     from app_transaction
-    where status = "คำสั่งซื้อสำเร็จ"
-    group by lotto
+    where status = "คำสั่งซื้อสำเร็จ" and is_active =True
+    group by lotto, room
+    having room = room
     order by count desc;
 END
 ```

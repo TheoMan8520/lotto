@@ -38,7 +38,7 @@
         <div class="d-flex ms-auto g-05 align-items-center">
           {% if user.is_authenticated %}
             {% if not user.is_superuser %}
-              <a href="{% url 'lotto:buy_lotto' %}" class="btn btn-primary"><p class="text-white">ซื้อลอตเตอรี่</p></a>
+              <a href="{% url 'lotto:rooms' %}" class="btn btn-primary"><p class="text-white">ซื้อลอตเตอรี่</p></a>
             {% endif %}
             <div class="dropdown">
               <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

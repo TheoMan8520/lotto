@@ -12,8 +12,9 @@
                     <h5>สรุปคำสั่งซื้อ</h5>
                 </div>
                 <div class="card-body d-flex flex-column align-items-center p-5">
-                    <form action="{% url 'lotto:confirm_buy_lotto' %}" method="POST" class="d-flex flex-column align-items-center g-10">
+                    <form action="{% url 'lotto:confirm_buy_lotto' room %}" method="POST" class="d-flex flex-column align-items-center g-10">
                         {% csrf_token %}
+                        <h5 class="w-100">Room: {{ room }}</h5>
                         <h5 class="w-100">Lotto: {{ lotto }}</h5>
                         <h5 class="w-100">จำนวน: {{ share }}</h5>
                         <h5 class="w-100">รวมเป็นเงินทั้งสิ้น: {{ total }} บาท</h5>
