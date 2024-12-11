@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views import View
 
 from .forms import SignUpForm, TransactionForm
-from .models import Transaction
+from .models import LottoBought, Room, Round, Transaction
 
 
 def signup_method(request):
@@ -70,11 +70,17 @@ class MainView(View):
 class RoomView(View):
     template_name = 'rooms.html'
     def get(self, request):
-        lottos_1 = Transaction.objects.filter(room = 1, is_active=True).values_list('lotto', flat=True)
-        lottos_2 = Transaction.objects.filter(room = 2, is_active=True).values_list('lotto', flat=True)
-        lottos_3 = Transaction.objects.filter(room = 3, is_active=True).values_list('lotto', flat=True)
-        lottos_4 = Transaction.objects.filter(room = 4, is_active=True).values_list('lotto', flat=True)
-        lottos_5 = Transaction.objects.filter(room = 5, is_active=True).values_list('lotto', flat=True)
+        round_latest = Round.objects.latest('id')
+        room1 = Room.objects.get(id=1)
+        lottos_1 = room1.transactions.filter(round_bought=round_latest).values_list('lotto', flat=True)
+        room2 = Room.objects.get(id=2)
+        lottos_2 = room2.transactions.filter(round_bought=round_latest).values_list('lotto', flat=True)
+        room3 = Room.objects.get(id=3)
+        lottos_3 = room3.transactions.filter(round_bought=round_latest).values_list('lotto', flat=True)
+        room4 = Room.objects.get(id=4)
+        lottos_4 = room4.transactions.filter(round_bought=round_latest).values_list('lotto', flat=True)
+        room5 = Room.objects.get(id=5)
+        lottos_5 = room5.transactions.filter(round_bought=round_latest).values_list('lotto', flat=True)
         room_lottos = [
             {"room": 1, "lottos": lottos_1},
             {"room": 2, "lottos": lottos_2},
@@ -92,13 +98,15 @@ class BuyLottoView(View):
     success_url=reverse_lazy('lotto:main')
     def get(self, request, room, error = ""):
         if request.user.is_authenticated:
+            round_latest = Round.objects.latest('id')
             shares = get_shares_room(room)
             disabled = True if shares == 50 else False
-            bought_lottos = request.user.transactions.filter(room = room, is_active=True).values_list('lotto', flat=True)
+            bought_lottos = request.user.transactions.filter(room = room, round_bought=round_latest).values_list('lotto', flat=True)
             pending_transactions = get_pending_lottos(room)
             successful_transactions = get_successful_lottos(room)
             ctx = {
                 "room": room,
+                "round": round_latest,
                 "shares": shares,
                 "disabled": disabled,
                 "successful_transactions": successful_transactions,
@@ -120,20 +128,23 @@ class ConfirmBuyLottoView(View):
             fifth = request.GET.get("fifth")
             fourth = request.GET.get("fourth")
             share = request.GET.get("share")
+            round_latest = Round.objects.latest('id')
             lotto = fourth+fifth+sixth
-            shares_room = get_shares_room(room)
-            shares_lotto = get_shares_lotto(room)
+            shares_room = get_shares_room(room) if get_shares_room(room) is not None else 0
+            shares_lotto = get_shares_lotto(lotto) if get_shares_lotto(lotto) is not None else 0
             # ในห้องจะต้องไม่เกิน 50
-            check_shares_room = (share+shares_room > 50)
+            check_shares_room = (int(share)+shares_room > 50)
             # เลขนี้ในทุกห้องต้องไม่เกิน 50
-            check_shares_lotto = (share+shares_lotto > 50)
-            pool = request.user.transactions.filter(is_active = True, room = room).values_list('lotto', flat=True)
+            check_shares_lotto = (int(share)+shares_lotto > 50)
+            pool = request.user.transactions.filter(round_bought=round_latest, room = room).values_list('lotto', flat=True)
             if lotto in pool or check_shares_room or check_shares_lotto:
                 # return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'error': lotto+" is already bought."}))
-                return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'room': room}))
+                # return redirect(reverse_lazy("lotto:buy_lotto", kwargs={'room': room}))
+                return BuyLottoView.get(request=request, room=room, error= lotto+" is already bought in this round.")
             else:
                 ctx = {
                     "room": room,
+                    "round": round_latest,
                     "lotto": lotto,
                     "share": share,
                     "total": int(share)*80,
@@ -145,11 +156,15 @@ class ConfirmBuyLottoView(View):
     def post(self, request, room):
         if request.user.is_authenticated:
             user = request.user
+            room_in = Room.objects.get(id = room)
+            round_latest = Round.objects.latest('id')
             lotto = request.POST.get("lotto")
             share = request.POST.get("share")
             if (user and lotto and share):
-                transaction = Transaction(user=user, lotto=lotto, share=share, room = room)
+                transaction = Transaction(user=user, lotto=lotto, share=share, room = room_in, round_bought = round_latest)
                 transaction.save()
+                room_in.shares += 1
+                room_in.save()
                 return redirect(self.success_url)
             else:
                 errors = ["Required inputs are not filled"]
@@ -165,10 +180,11 @@ class TransactionView(View):
     success_url=reverse_lazy('lotto:transactions')
     home=reverse_lazy('lotto:main')
     def get(self, request):
+        round_latest = Round.objects.latest('id')
         if request.user.is_superuser:
-            old_transactions = Transaction.objects.filter(is_active=False)
-            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน", is_active=True) | Transaction.objects.filter(status="การชำระเงินไม่สำเร็จ", is_active=True)
-            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ", is_active=True)
+            old_transactions = Transaction.objects.exclude(round_bought=round_latest)
+            pending_transactions = Transaction.objects.filter(status="รอการยืนยันการชำระเงิน", round_bought=round_latest) | Transaction.objects.filter(status="การชำระเงินไม่สำเร็จ", round_bought=round_latest)
+            successful_transactions = Transaction.objects.filter(status="คำสั่งซื้อสำเร็จ", round_bought=round_latest)
             ctx = {
                 "old_transactions": old_transactions,
                 "pending_transactions": pending_transactions,
@@ -176,9 +192,9 @@ class TransactionView(View):
             }
             return render(request, self.template_name, ctx)
         elif request.user.is_authenticated:
-            old_transactions = request.user.transactions.filter(is_active=False)
-            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน", is_active=True) | request.user.transactions.filter(status="การชำระเงินไม่สำเร็จ", is_active=True)
-            successful_transactions = request.user.transactions.filter(status="คำสั่งซื้อสำเร็จ", is_active=True)
+            old_transactions = request.user.transactions.exclude(round_bought=round_latest)
+            pending_transactions = request.user.transactions.filter(status="รอการยืนยันการชำระเงิน", round_bought=round_latest) | request.user.transactions.filter(status="การชำระเงินไม่สำเร็จ", round_bought=round_latest)
+            successful_transactions = request.user.transactions.filter(status="คำสั่งซื้อสำเร็จ", round_bought=round_latest)
             ctx = {
                 "old_transactions": old_transactions,
                 "pending_transactions": pending_transactions,
@@ -191,11 +207,15 @@ class TransactionView(View):
     def post(self, request, pk):
         if request.user.is_superuser:
             flush = request.POST.get("flush")
+            round_latest = Round.objects.latest('id')
             if flush:
-                transactions = Transaction.objects.filter(is_active=True)
-                for transaction in transactions:
-                    transaction.is_active = False
-                    transaction.save()
+                # new round
+                round_new = Round(date="2024:12:16")
+                round_new.save()
+                rooms = Room.objects.all()
+                for room in rooms:
+                    room.shares = 0
+                    room.save()
             else:
                 transaction = get_object_or_404(Transaction, id=pk)
                 response = request.POST.get("response")
