@@ -29,10 +29,19 @@ class Transaction(models.Model):
 
 class LottoBought(models.Model):
     lotto = models.CharField(max_length=6)
-    prices = models.IntegerField()
+    prize = models.IntegerField()
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='lottos')
     round_bought = models.ForeignKey(Round, on_delete=models.CASCADE, related_name='lottos')
     
     def __str__(self):
         return self.id
 
+class Slip(models.Model):
+    prize = models.IntegerField()
+    status = models.CharField(max_length=255, default="กำลังดำเนินการ")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='slips')
+    round_bought = models.ForeignKey(Round, on_delete=models.CASCADE, related_name='slips')
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='slips')
+    
+    def __str__(self):
+        return self.id

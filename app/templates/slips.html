@@ -1,0 +1,61 @@
+{% extends "header.html" %}
+{% block content %}
+  {% if user.is_authenticated %}
+    <div class="d-flex flex-column w-100 h-100 align-items-center g-10 p-2">
+        <h3>Slips</h3>
+        <!-- Pending slips -->
+        <h4 class="w-100">Pending slips:</h4>
+        {% if pending_slips %}
+            <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
+                {% for slip in pending_slips %}
+                    <div class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
+                        <div class="w-100 p-3 border-bottom border-1 bg-light">
+                            <h6>slip_id: {{ slip.id }}</h6>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <form action="{% url 'lotto:slips' slip.id %}" method="POST" class="d-flex flex-column align-items-start g-10 p-3">
+                                {% csrf_token %}
+                                <p>ผู้ซื้อ: {{ slip.user.username }}</p>
+                                <p>room: {{ slip.room.id }}</p>
+                                <p>round: {{ slip.round_bought.date }}</p>
+                                <p>จำนวนเงินที่ต้องได้รับ: {{ slip.prize }}</p>
+                                <p>สถานะการโอน: {{ slip.status }}</p>
+                                {% if user.is_superuser %}
+                                    <button name="response" type="submit" class="btn btn-primary px-3 py-2" value="1">ดำเนินการโอนเงิน</button>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h5>No pending slips</h5>
+        {% endif %}
+
+        <!-- Successful slips -->
+        <h4 class="w-100">Successful slips:</h4>
+        {% if successful_slips %}
+            <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
+                {% for slip in successful_slips %}
+                    <div class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
+                        <div class="w-100 p-3 border-bottom border-1 bg-light">
+                            <h6>slip_id: {{ slip.id }}</h6>
+                        </div>
+                        <div class="d-flex flex-column align-items-center">
+                            <div class="d-flex flex-column align-items-start g-10 p-3">
+                                <p>ผู้ซื้อ: {{ slip.user.username }}</p>
+                                <p>room: {{ slip.room.id }}</p>
+                                <p>round: {{ slip.round_bought.date }}</p>
+                                <p>จำนวนเงินที่ต้องได้รับ: {{ slip.prize }}</p>
+                                <p>สถานะการโอน: {{ slip.status }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h5>No successful slips</h5>
+        {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "header.html" %}
+{% block content %}
+    <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
+        {% if user.is_authenticated %}
+            <h4>ห้องที่ {{ room.id }} รอบ {{ round.date }}</h4>
+            {% if lottos_bought %}
+                <p>เงินรางวัลของแต่ละหมายเลขจะถูก update หลังการประกาศรางวัล</p>
+                <div class="card d-flex flex-column align-items-center g-05 p-3 w-25">
+                    <div class="d-flex w-100 mb-2">
+                        <h6 class="me-auto">Lotto</h6>
+                        <h6>Prize</h6>
+                    </div>
+                    {% for lotto in lottos_bought %}
+                    <div class="d-flex w-100">
+                        <p class="me-auto">{{ lotto.lotto }}</p>
+                        <p>{{ lotto.prize }}</p>
+                    </div>
+                    {% endfor %}
+                    <div class="d-flex w-100 mb-2">
+                        <h6 class="me-auto">รวมเป็นเงินทั้งสิ้น</h6>
+                        <h6>{{ total }}</h6>
+                    </div>
+                </div>
+                <div class="card d-flex flex-column align-items-center p-3 g-05">
+                    <p>คุณมีหุ้น {{ shares_own }} หุ้น คิดเป็น {{ shares_percent }} %</p>
+                    <h6>ได้ส่วนแบ่งทั้งหมด {{ shares_total }} บาท</h6>
+                    <p>*สามารถเช็คการโอนเงินได้ที่เมนูการโอน</p>
+                </div>
+            {% else %}
+                <p>Admin ยังไม่ได้ทำการซื้อหุ้นให้แก่ห้องนี้</p>
+            {% endif %}
+            <div class="d-flex g-10">
+                <!-- รอยืนยัน -->
+                <div class="card">
+                    <div class="card-header">
+                        Lotto รอการยืนยันการชำระเงิน (Shares)
+                    </div>
+                    <div class="card-body">
+                        {% if pending_transactions %}
+                            {% for transaction in pending_transactions %}
+                                <div class="d-flex w-100">
+                                    <p class="me-auto">{{ transaction.lotto }}</p>
+                                    <p>{{ transaction.count }}</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- สำเร็จแล้ว -->
+                <div class="card">
+                    <div class="card-header">
+                        Lotto ที่ได้รับการชำระเงินแล้ว (Shares)
+                    </div>
+                    <div class="card-body">
+                        {% if successful_transactions %}
+                            {% for transaction in successful_transactions %}
+                                <div class="d-flex w-100">
+                                    <p class="me-auto">{{ transaction.lotto }}</p>
+                                    <p>{{ transaction.count }}</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% if not disabled and room.is_open %}
+                <a class="card p-3" href="{% url 'lotto:buy_lotto' room.id %}">ซื้อหุ้นกับห้องนี้</a>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -8,7 +8,7 @@
         {% if pending_transactions %}
             <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
                 {% for transaction in pending_transactions %}
-                    <div class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
+                    <a href="{% url 'lotto:room' transaction.room.id %}" class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
                         <div class="w-100 p-3 border-bottom border-1 bg-light">
                             <h6>{{ transaction.created_at.date }}</h6>
                         </div>
@@ -26,11 +26,12 @@
                                 {% endif %}
                                 {% if user.is_superuser %}
                                     <button name="response" type="submit" class="btn btn-primary px-3 py-2" value="1">ยืนยันการชำระเงิน</button>
-                                    <button name="response" type="submit" class="btn btn-danger px-3 py-2" value="0">การชำระเงินไม่สำเร็จ</button>
+                                    <button name="response" type="submit" class="btn btn-warning px-3 py-2" value="0">การชำระเงินไม่สำเร็จ</button>
+                                    <button name="response" type="submit" class="btn btn-danger px-3 py-2" value="2">ลบคำสั่งซื้อ</button>
                                 {% endif %}
                             </form>
                         </div>
-                    </div>
+                    </a>
                 {% endfor %}
             </div>
         {% else %}
@@ -38,7 +39,8 @@
             {% if user.is_superuser %}
                 <form action="{% url 'lotto:transactions' 0 %}" method="POST">
                     {% csrf_token %}
-                    <button name="flush" type="submit" class="btn btn-primary px-3 py-2" value="1">Flush all</button>
+                    <button name="closeround" type="submit" class="btn btn-primary px-3 py-2" value="1">Close round</button>
+                    <button name="reround" type="submit" class="btn btn-primary px-3 py-2" value="1">Reround</button>
                 </form>
             {% endif %}
         {% endif %}
@@ -48,7 +50,7 @@
         {% if successful_transactions %}
             <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
                 {% for transaction in successful_transactions %}
-                    <div class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
+                    <a href="{% url 'lotto:room' transaction.room.id %}" class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
                         <div class="w-100 p-3 border-bottom border-1 bg-light">
                             <h6>{{ transaction.created_at.date }}</h6>
                         </div>
@@ -62,7 +64,7 @@
                                 <p>สถานะการสั่งซื้อ: {{ transaction.status }}</p>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 {% endfor %}
             </div>
         {% else %}
@@ -74,7 +76,7 @@
         {% if old_transactions %}
             <div class="d-flex flex-row g-05 overflow-scroll text-nowrap w-100 bg-white p-3 rounded rounded-3">
                 {% for transaction in old_transactions %}
-                    <div class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
+                    <a href="{% url 'lotto:room_history' transaction.room.id transaction.round_bought.id %}" class="d-flex flex-column align-items-center rounded rounded-3 bg-white border border-1">
                         <div class="w-100 p-3 border-bottom border-1 bg-light">
                             <h6>{{ transaction.created_at.date }}</h6>
                         </div>
@@ -88,7 +90,7 @@
                                 <p>สถานะการสั่งซื้อ: {{ transaction.status }}</p>
                             </div>
                         </div>
-                    </div>
+                    </>
                 {% endfor %}
             </div>
         {% else %}

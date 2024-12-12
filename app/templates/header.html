@@ -45,6 +45,7 @@
                 Profile
               </button>
               <ul class="dropdown-menu">
+                <li><a href="{% url 'lotto:slips' %}" class="dropdown-item">slips</a></li>
                 <li><a href="{% url 'lotto:transactions' %}" class="dropdown-item">คำสั่งซื้อ</a></li>
                 <li><a href="{% url 'logout' %}?next={% url 'lotto:main' %}" class="dropdown-item">logout</a></li>
               </ul>

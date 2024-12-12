@@ -1,11 +1,12 @@
 {% extends "header.html" %}
 {% block content %}
-    <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
+    <div class="d-flex flex-column w-100 h-100 align-items-center g-05 pt-2">
         {% if user.is_authenticated %}
-            <h4>Room {{ room }} ({{ shares }}/50)</h4>
+            <h4>ห้อง {{ room }} ({{ shares }}/50)</h4>
+            <p>*จำกัดหุ้นอยู่ที่ห้องละ 50 หุ้น</p>
             <div class="card d-flex flex-column align-items-center">
                 <div class="card-header w-100 p-3">
-                    <h5>Round: {{ round.date }}</h5>
+                    <h5>รอบ: {{ round.date }}</h5>
                 </div>
                 <div class="card-body d-flex flex-column align-items-center p-5">
                     {% if disabled %}
@@ -13,14 +14,13 @@
                     {% else %}
                         <form action="{% url 'lotto:confirm_buy_lotto' room %}" method="GET" class="d-flex flex-column align-items-center g-10">
                             {% csrf_token %}
-                            {% if error %}
+                            {% if errors %}
                                 <div class="d-flex flex-column g-05">
-                                    <div class="alert alert-danger m-0">
-                                        {{ error }}
-                                    </div>
-                                    <div class="alert alert-danger m-0">
-                                        You can not buy/change lotto you already bought
-                                    </div>
+                                    {% for error in errors %}
+                                        <div class="alert alert-danger m-0">
+                                            {{ error }}
+                                        </div>
+                                    {% endfor %}
                                 </div>
                             {% endif %}
                             <div class="d-flex g-10">
@@ -34,9 +34,10 @@
                             </div>
                             <button title="submit_form" type="submit" class="btn btn-primary px-4 py-3">ยืนยันคำสั่งซื้อและแจ้งชำระเงิน</button>
                             <div class="d-flex flex-column g-05">
-                                <p class="mt-auto">*You can not buy/change lotto you already bought</p>
+                                <p class="mt-auto">*คุณไม่สามารถแก้ไขหรือซื้อเลขหุ้นเดิมซ้ำได้</p>
+                                <p class="mt-auto">*คุณไม่สามารถซื้อหุ้นได้มากกว่า 10 หุ้นในห้องหนึ่ง</p>
                                 {% if bought_lottos %}
-                                    <p>Lotto you bought:</p>
+                                    <p>หุ้นที่คุณได้ซื้อไปแล้ว:</p>
                                     <div class="d-flex flex-row g-05 overflow-scroll text-nowrap" style="width: 335px;">
                                         {% for lotto in bought_lottos %}
                                             <p>{{ lotto }}</p>
@@ -46,34 +47,6 @@
                             </div>
                         </form>
                     {% endif %}
-                </div>
-            </div>
-            <div class="d-flex g-10">
-                <!-- รอยืนยัน -->
-                <div class="card">
-                    <div class="card-header">
-                        Pending Lotto (Shares)
-                    </div>
-                    <div class="card-body">
-                        {% if pending_transactions %}
-                            {% for transaction in pending_transactions %}
-                                <p>{{ transaction.lotto }} ({{ transaction.count }})</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                </div>
-                <!-- สำเร็จแล้ว -->
-                <div class="card">
-                    <div class="card-header">
-                        Bought Lotto (Shares)
-                    </div>
-                    <div class="card-body">
-                        {% if successful_transactions %}
-                            {% for transaction in successful_transactions %}
-                            <p>{{ transaction.lotto }} ({{ transaction.count }})</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
                 </div>
             </div>
         {% endif %}
