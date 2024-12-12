@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views import View
 
 from .forms import SignUpForm, TransactionForm
-from .models import LottoBought, Room, Round, Slip, Transaction
+from .models import Account, LottoBought, Room, Round, Slip, Transaction
 
 
 def signup_method(request):
@@ -18,10 +18,14 @@ def signup_method(request):
         if request.method == "POST":
             form = SignUpForm(request.POST)
             if form.is_valid():
+                form.save()
                 username = form.cleaned_data.get('username')
                 password = form.cleaned_data.get('password1')
-                form.save()
                 user = authenticate(username=username, password=password)
+                
+                banknumber = form.cleaned_data.get('banknumber')
+                bankname = form.cleaned_data.get('bankname')
+                Account.objects.create(user=user, banknumber=banknumber, bankname=bankname)
                 if user is not None:
                     login(request, user)
                     return redirect(success_url)

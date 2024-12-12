@@ -18,6 +18,8 @@
                                 <p>ผู้ซื้อ: {{ slip.user.username }}</p>
                                 <p>room: {{ slip.room.id }}</p>
                                 <p>round: {{ slip.round_bought.date }}</p>
+                                <p>เลขบัญชี: {{ slip.user.account.banknumber }}</p>
+                                <p>ธนาคาร: {{ slip.user.account.bankname }}</p>
                                 <p>จำนวนเงินที่ต้องได้รับ: {{ slip.prize }}</p>
                                 <p>สถานะการโอน: {{ slip.status }}</p>
                                 {% if user.is_superuser %}

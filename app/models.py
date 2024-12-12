@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.db import models
 
 
@@ -45,3 +46,26 @@ class Slip(models.Model):
     
     def __str__(self):
         return self.id
+
+class Account(models.Model):
+    user= models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='account')
+    banknumber = models.CharField(
+        max_length=10,
+        validators=[MinLengthValidator(10), MaxLengthValidator(10)],
+    )
+    bankname = models.CharField(
+        max_length=50,  # Limit the length of bank name string
+        choices=[
+            ('ธนาคารกรุงเทพ', 'Bangkok Bank'),
+            ('ธนาคารกสิกรไทย', 'Kasikorn Bank'),
+            ('ธนาคารไทยพาณิชย์', 'Siam Commercial Bank'),
+            ('ธนาคารกรุงไทย', 'Krung Thai Bank'),
+            ('ธนาคารทหารไทยธนชาต', 'TMB Bank'),
+            ('ธนาคารออมสิน', 'Government Savings Bank'),
+            ('ยูโอบี ประเทศไทย', 'UOB Thailand'),
+            ('ซิตี้แบงก์ ประเทศไทย', 'CitiBank Thailand'),
+        ],
+    )
+    
+    def __str__(self):
+        return self.banknumber

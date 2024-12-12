@@ -1,8 +1,27 @@
 {% extends "header.html" %}
 {% block content %}
-  <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
-    <a class="d-flex btn btn-primary" href="{% url 'lotto:stat' %}">Go to stat</a>
-  </div>
-  {% if user.is_authenticated %}
-  {% endif %}
+  <div class="d-flex flex-column w-100 h-100 align-items-center g-10 p-2">
+    <div class="d-flex flex-column align-items-center mb-4">
+      <h2 class="mb-3">About Thai Pools Lottery</h2>
+      <p class="text-center">
+        หากคุณอยากมีโอกาสถูกรางวัลลอตเตอรี่มากขึ้น แต่กังวลเรื่องการลงทุนสูงหรือความเสี่ยงที่อาจไม่ได้ผล <br>
+        เป็นแพลตฟอร์มที่ช่วยรวมกลุ่มและจัดการในการซื้อสลากกินแบ่งรัฐบาลในระบบหุ้น-เลขท้ายสามตัว <br>
+        ซึ่งหมายถึงโอกาสที่จะถูกรางวัลสามตัวท้ายมีมากขึ้น หรือแม้แต่รางวัลอื่นๆ ก็อาจจะเป็นไปได้ โดยที่คุณไม่ต้องจัดการเอง
+      </p>
+    </div>
+    <div class="d-flex flex-column align-items-center g-05 bg-info p-4 ">
+      <h2 class="mb-3">ทำไมต้อง Thai Pools Lottery?</h2>
+      <h5>เพิ่มโอกาสในการถูกรางวัล</h5>
+      <p class="text-center">
+        เมื่อคุณเข้าร่วมซื้อลอตเตอรี่กับ Thai Pools Lottery คุณจะสามารถซื้อสลากได้ในจำนวนที่มากกว่าที่จะซื้อเอง <br>
+        ซึ่งทำให้โอกาสในการชนะรางวัลเพิ่มขึ้นหลายเท่าตัว
+      </p>
+      <h5>สะดวกและปลอดภัย</h5>
+      <p>
+        ไม่ต้องยุ่งยากในจัดการเก็บเงินหรือจัดการลอตเตอรี่เอง เพราะทุกขั้นตอนสามารถทำผ่านออนไลน์ได้อย่างง่ายดายและปลอดภัย
+      </p>
+      <h5>ร่วมเล่นในราคาที่ถูกกว่า</h5>
+      <p>แทนที่จะต้องซื้อสลากเองหลายใบเพื่อเพิ่มโอกาสในการถูกรางวัล คุณสามารถร่วมกลุ่มและแบ่งปันค่าใช้จ่ายได้ในราคาที่ประหยัด</p>
+    </div>
+</div>
 {% endblock %}
