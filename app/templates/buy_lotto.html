@@ -1,0 +1,85 @@
+{% extends "header.html" %}
+
+{% block content %}
+    <div class="d-flex flex-column w-100 h-100 align-items-center g-4 pt-3">
+        {% if user.is_authenticated %}
+   
+            <div class="card shadow-lg w-75 mb-4">
+                <div class="card-header text-center bg-primary text-white">
+                    <h5>งวดวันที่ 16 ธันวาคม 2567</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form action="{% url 'lotto:confirm_buy_lotto' %}" method="GET" class="d-flex flex-column align-items-center g-4">
+                        {% csrf_token %}
+                        {% if error %}
+                            <div class="alert alert-danger w-100 mb-3">
+                                {{ error }}
+                            </div>
+                            <div class="alert alert-danger w-100 mb-3">
+                                You cannot buy/change lotto you already bought
+                            </div>
+                        {% endif %}
+
+                        <div class="d-flex justify-content-center gap-3 mb-4">
+                            <input name="fourth" value="0" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-3 text-center w-25">
+                            <input name="fifth" value="0" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-3 text-center w-25">
+                            <input name="sixth" value="0" type="number" min="0" max="9" placeholder="0" class="lotto h4 card p-3 text-center w-25">
+                        </div>
+        
+                        <div class="d-flex justify-content-center align-items-center mb-4">
+                            <h5 class="mr-3">จำนวนหุ้น (หุ้นละ 80 บาท):</h5>
+                            <input name="share" required type="number" min="1" max="10" placeholder="0" class="lotto h4 card p-3 text-center w-25">
+                        </div>
+    
+                        <button type="submit" class="btn btn-primary px-5 py-3 mb-3">ยืนยันคำสั่งซื้อและแจ้งชำระเงิน</button>
+                        
+
+                        <div class="d-flex flex-column align-items-center g-2">
+                            <p class="text-danger mb-2">* คุณไม่สามารถ <strong>ซื้อ</strong> หรือ <strong>เปลี่ยน</strong> เลขสลากที่คุณได้ซื้อไปแล้ว</p>
+                            {% if bought_lottos %}
+                                <p>เลขสลากที่มีการซื้อไปแล้ว:</p>
+                                <div class="d-flex flex-wrap gap-2 overflow-auto w-100">
+                                    {% for lotto in bought_lottos %}
+                                        <p class="badge bg-secondary" style="font-size: 20px;">{{ lotto }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between gap-4 w-75 mb-4">
+                <div class="card shadow-sm w-50">
+                    <div class="card-header bg-warning text-center">
+                        เลขสลากที่รอดำเนินการ (จำนวนหุ้น)
+                    </div>
+                    <div class="card-body text-center">
+                        {% if pending_transactions %}
+                            {% for transaction in pending_transactions %}
+                                <div class="d-inline-block w-25">
+                                    <p>{{ transaction.lotto }} ({{ transaction.count }})</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            
+                <div class="card shadow-sm w-50">
+                    <div class="card-header bg-success text-center text-white">
+                        เลขสลากที่ซื้อแล้ว (จำนวนหุ้น)
+                    </div>
+                    <div class="card-body text-center">
+                        {% if successful_transactions %}
+                            {% for transaction in successful_transactions %}
+                                <div class="d-inline-block w-25">
+                                    <p>{{ transaction.lotto }} ({{ transaction.count }})</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

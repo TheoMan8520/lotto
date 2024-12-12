@@ -1,0 +1,87 @@
+{% extends "header.html" %}
+{% block content %}
+<div class="d-flex flex-column align-items-center" style="font-family: 'Times New Roman'; font-size: 20px;">
+  <h1 class="mb-2">📊 ตรวจสถิติสลากกินแบ่งรัฐบาล📊 </h1>
+  <br>
+      <p><strong>วิธีใช้:</strong> เลือกจำนวนหลักของตัวเลขที่ต้องการดูสถิติ</p>
+      <p>โดยจะได้ผลลัพธ์เป็นตารางจำนวนการปรากฎตัวของเลขสลากกินแบ่งรัฐบาลทั้งหมดเรียงจากการจำนวนการปรากฏมากไปน้อย</p>
+      <p>สถิติถูกรวบรวมตั้งแต่ 16 มกราคม 1995 ถึงวันที่ 16 เดือนเมษายน 2024</p>
+  <a href="https://github.com/heart/Data-Set-Thai-Lotto/blob/master/lotto.csv" target="_blank">แหล่งที่มา</a>
+</div>
+
+<div style="text-align: center; margin: 20px 0;">
+  <!-- Horizontal buttons for mode selection -->
+  <h2 style="font-size: 25px;">จำนวนหลัก</h2>
+  <div style="display: inline-flex; gap: 10px;">
+    
+      <a class="page-link {% if mode == 2 %}fw-bold fs-4 active-mode{% endif %}" 
+         href="{% url 'lotto:table_mode' 2 %}" 
+         style="padding: 10px 20px; text-decoration: none; background-color: {% if mode == 2 %}#007bff{% else %}#d6eaf8{% endif %}; color: {% if mode == 2 %}white{% else %}#007bff{% endif %}; border-radius: 5px; border: 1px solid #007bff; transition: 0.3s; font-family: 'Sarabun', sans-serif; display: flex; align-items: center; justify-content: center; text-align: center;">
+         2
+      </a>
+      <a class="page-link {% if mode == 3 %}fw-bold fs-4 active-mode{% endif %}" 
+         href="{% url 'lotto:table_mode' 3 %}" 
+         style="padding: 10px 20px; text-decoration: none; background-color: {% if mode == 3 %}#007bff{% else %}#d6eaf8{% endif %}; color: {% if mode == 3 %}white{% else %}#007bff{% endif %}; border-radius: 5px; border: 1px solid #007bff; transition: 0.3s; font-family: 'Sarabun', sans-serif; display: flex; align-items: center; justify-content: center; text-align: center;">
+         3
+      </a>
+  </div>
+</div>
+
+
+{% if stats2 or stats3 %}
+<div style="display: flex; justify-content: space-between; gap: 70px; margin-top: 20px;"> <!-- Increased gap value here -->
+
+{% if stats2 %}
+  <div style="flex: 1; min-width: 45%;">
+    <table style="width: 110%; border-collapse: collapse; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #ffffff;">
+      <thead>
+        <tr style="background-color: #0d6efd; color: white; font-weight: bold; font-family: 'Sarabun', sans-serif;">
+          {% if mode == 2 %}
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;">หมายเลข 2 ตัวท้าย</th>
+          {% elif mode == 3 %}
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;">หมายเลข 3 ตัวหน้า</th>
+          {% endif %}
+          <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;">จำนวนการปรากฏ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stat in stats2 %}
+          <tr style="background-color: {% cycle '#f0f8ff' '#ffffff' %}; border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px 15px; text-align: center; font-family: 'Sarabun', sans-serif;">{{ stat.lotto }}</td>
+            <td style="padding: 12px 15px; text-align: center; font-family: 'Sarabun', sans-serif;">{{ stat.count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+{% if stats3 %}
+  <div style="flex: 1; min-width: 45%;">
+    <table style="width: 110%; border-collapse: collapse; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #ffffff;">
+      <thead>
+        <tr style="background-color: #0d6efd; color: white; font-weight: bold; font-family: 'Sarabun', sans-serif;">
+          {% if mode == 3 %}
+            <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;">หมายเลข 3 ตัวท้าย</th>
+          {% endif %}
+          <th style="padding: 12px 15px; text-align: center; border: 1px solid #ddd;">จำนวนการปรากฏ</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for stat in stats3 %}
+          <tr style="background-color: {% cycle '#f0f8ff' '#ffffff' %}; border-bottom: 1px solid #ddd;">
+            <td style="padding: 12px 15px; text-align: center; font-family: 'Sarabun', sans-serif;">{{ stat.lotto }}</td>
+            <td style="padding: 12px 15px; text-align: center; font-family: 'Sarabun', sans-serif;">{{ stat.count }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endif %}
+
+</div>
+{% else %}
+<p style="text-align: center; font-size: 18px; color: #e74c3c; margin-top: 20px; font-weight: bold;">กดตัวเลขเพื่อเลือกดูสถิติ</p>
+{% endif %}
+
+{% endblock %}

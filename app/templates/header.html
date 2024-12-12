@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <style>
+      .header a{
+        text-decoration: none;
+      }
+      .header-links {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          flex-grow: 1; 
+      }
+      .dropdown {
+          margin-left: auto; 
+      }
+  </style>
+  <div class="header d-flex w-100 p-3 bg-primary align-items-center" style="font-family: 'Times New Roman';">
+      <a href="{% url 'lotto:main' %}" class="text-white"><h3><strong>Thai Pools Lottery</strong></h3></a>
+      <div class="header-links">
+          <a href="{% url 'lotto:stat' %}" class="btn btn-primary text-white">ตรวจสถิติตัวเลข</a>
+          <a href="{% url 'lotto:stattable' %}" class="btn btn-primary text-white">ตารางสถิติทั้งหมด</a>
+          {% if user.is_authenticated and user.is_superuser %}
+          <a href="{% url 'lotto:transactions' %}" class="btn btn-primary text-white">การยืนยันคำสั่งซื้อ</a>
+          {% endif %}
+          {% if user.is_authenticated and not user.is_superuser %}
+              <a href="{% url 'lotto:buy_lotto' %}" class="btn btn-primary text-white">ซื้อสลากกินแบ่งรัฐบาล</a>
+          {% endif %}
+      </div>
+      {% if user.is_authenticated %}
+      <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Hello, {{ user.first_name }}
+          </button>
+          <ul class="dropdown-menu">
+            {% if user.is_authenticated and not user.is_superuser %}
+              <li><a href="{% url 'lotto:transactions' %}" class="dropdown-item">คำสั่งซื้อของฉัน</a></li>
+            {% endif %}
+              <li><a href="{% url 'logout' %}?next={% url 'lotto:main' %}" class="dropdown-item">logout</a></li>
+          </ul>
+      </div>
+      {% else %}
+          <a href="{% url 'lotto:login' %}" class="btn btn-primary text-white ms-auto">เข้าสู่ระบบ/สมัครสมาชิก</a>
+      {% endif %}
+  </div>
+  
+    <div class="d-flex flex-column align-items-center body-section h-100 p-3">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+<div class="fixed-bottom" style="position: fixed; bottom: 20px; left: 20px; z-index: 10;">
+  {% if user.is_authenticated %}
+  <p class="text-danger" style="font-size: 18px; font-weight: bold;">* * การลงทุนมีความเสี่ยง ผู้ลงทุนควรศึกษาข้อมูลให้รอบคอบก่อนตัดสินใจลงทุน</p>
+  {% endif %}
+</div>
+</html>
