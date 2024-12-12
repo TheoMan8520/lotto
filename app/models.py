@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
@@ -37,3 +38,8 @@ class Account(models.Model):
     
     def __str__(self):
         return self.user.username
+=======
+from django.db import models
+
+# Create your models here.
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d

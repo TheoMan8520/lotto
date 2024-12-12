@@ -1,0 +1,13 @@
+{% extends 'header.html' %} 
+
+{% block content %}
+    <div>
+        <div style="text-align: center;">
+            <h1>My Profile</h1>
+            <p>Welcome to your profile page, {{ user.first_name }} {{ user.last_name }}!</p>
+            <p>Email: {{ user.email }}</p>
+            <p>Username: {{ user.username }}</p>
+            
+        </div>
+    </div>
+{% endblock %}

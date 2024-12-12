@@ -8,6 +8,7 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <style>
+<<<<<<< HEAD
       .header a{
         text-decoration: none;
       }
@@ -51,13 +52,75 @@
   </div>
   
     <div class="d-flex flex-column align-items-center body-section h-100 p-3">
+=======
+        h1, h2, h3, h4, h5, h6, p {
+            margin: 0;
+        }
+        a {
+            text-decoration: none;
+            margin: 0;
+        }
+        .lotto {
+            text-align: center;
+        }
+        .g-10 {
+            gap: 1rem;
+        }
+        .g-05 {
+            gap: 0.5rem;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .dropdown-menu {
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header d-flex w-100 p-3 bg-primary align-items-center">
+        <a href="{% url 'lotto:main' %}"><h3 class="text-white">Thai Pools Lottery</h3></a>
+        <div class="d-flex ms-auto g-10 align-items-center">
+            <a href="{% url 'lotto:login' %}" class="btn btn-primary">ซื้อลอตเตอรี่</a>
+            <a href="{% url 'lotto:login' %}" class="btn btn-primary">คำสั่งซื้อ</a>
+            
+            {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hello, {{ user.first_name }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="{% url 'lotto:profile' %}">My Profile</a></li>
+                        <li>
+                            <form method="POST" action="{% url 'lotto:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="dropdown-item" style="border: none; background: none;">Sign out</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <a href="{% url 'lotto:login' %}" class="btn btn-primary">เข้าสู่ระบบ</a>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="d-flex flex-column align-items-center bg-light">
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d
         {% block content %}
         {% endblock %}
     </div>
 </body>
+<<<<<<< HEAD
 <div class="fixed-bottom" style="position: fixed; bottom: 20px; left: 20px; z-index: 10;">
   {% if user.is_authenticated %}
   <p class="text-danger" style="font-size: 18px; font-weight: bold;">* * การลงทุนมีความเสี่ยง ผู้ลงทุนควรศึกษาข้อมูลให้รอบคอบก่อนตัดสินใจลงทุน</p>
   {% endif %}
 </div>
 </html>
+=======
+</html>
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d

@@ -38,8 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap5',
+<<<<<<< HEAD
     'app.apps.AppConfig',
     
+=======
+    'app.apps.AppConfig'
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d
 ]
 
 MIDDLEWARE = [
@@ -78,10 +82,24 @@ WSGI_APPLICATION = 'lotto.wsgi.application'
 
 DATABASES = {
     'default': {
+<<<<<<< HEAD
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'lotto',
         'USER': 'root',
         'PASSWORD': 'Fang0840844049',
+=======
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'lotto',
+        'USER': 'root',
+        'PASSWORD': 'pasword',
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d
         'PORT':'3306',
         'HOST': '127.0.0.1',
         'OPTIONS': {
@@ -94,6 +112,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
+<<<<<<< HEAD
     # {
     #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     # },
@@ -106,6 +125,9 @@ AUTH_PASSWORD_VALIDATORS = [
     # {
     #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     # },
+=======
+
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d
 ]
 
 

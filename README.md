@@ -51,6 +51,7 @@ BEGIN
 		type;
 END
 ```
+<<<<<<< HEAD
 ```bash
 CREATE PROCEDURE `getPendingLottos` ()
 BEGIN
@@ -71,6 +72,8 @@ BEGIN
     order by count desc;
 END
 ```
+=======
+>>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d
 
 ## information: lotto_data
 มี raw ไฟล์ผลรางวัลอยู่ และไฟล์ restructure.py ที่ใช้สร้าง lotto_all.csv โดยมีโครงสร้างคือ date, lotto, type เพื่อให้สามารถนับได้สะดวก
