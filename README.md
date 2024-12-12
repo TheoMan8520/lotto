@@ -72,6 +72,25 @@ BEGIN
     order by count desc;
 END
 ```
+```bash
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getLottoStatsTable`(
+	IN lotto_mode TEXT
+)
+BEGIN
+    SELECT 
+    lotto, 
+    COUNT(*) AS count
+FROM 
+    lotto
+WHERE 
+    type = lotto_mode
+GROUP BY 
+    lotto
+ORDER BY 
+    count desc;
+
+END
+```
 =======
 >>>>>>> cd22856e6f14c9c66eb86c679667a4276cccc41d
 
