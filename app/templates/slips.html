@@ -16,8 +16,8 @@
                             <form action="{% url 'lotto:slips' slip.id %}" method="POST" class="d-flex flex-column align-items-start g-10 p-3">
                                 {% csrf_token %}
                                 <p>ผู้ซื้อ: {{ slip.user.username }}</p>
-                                <p>room: {{ slip.room.id }}</p>
-                                <p>round: {{ slip.round_bought.date }}</p>
+                                <p>ห้อง: {{ slip.room.id }}</p>
+                                <p>งวด: {{ slip.round_bought.date }}</p>
                                 <p>เลขบัญชี: {{ slip.user.account.banknumber }}</p>
                                 <p>ธนาคาร: {{ slip.user.account.bankname }}</p>
                                 <p>จำนวนเงินที่ต้องได้รับ: {{ slip.prize }}</p>
@@ -46,8 +46,8 @@
                         <div class="d-flex flex-column align-items-center">
                             <div class="d-flex flex-column align-items-start g-10 p-3">
                                 <p>ผู้ซื้อ: {{ slip.user.username }}</p>
-                                <p>room: {{ slip.room.id }}</p>
-                                <p>round: {{ slip.round_bought.date }}</p>
+                                <p>ห้อง: {{ slip.room.id }}</p>
+                                <p>งวด: {{ slip.round_bought.date }}</p>
                                 <p>จำนวนเงินที่ต้องได้รับ: {{ slip.prize }}</p>
                                 <p>สถานะการโอน: {{ slip.status }}</p>
                             </div>

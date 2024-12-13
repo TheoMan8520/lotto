@@ -5,26 +5,26 @@
     <p>{{ error }}</p>
   {% endfor %}
 {% endif %}
-<form method="POST" actione="." id="signup-form" class="d-flex flex-column align-items-center g-10 py-4 px-5 card">
+<form method="POST" actione="." id="signup-form" class="d-flex flex-column align-items-center g-10 py-4 px-5 card w-50">
     {% csrf_token %}
     <h3>Signup</h3>
-    <div class="form-floating">
+    <div class="form-floating w-50">
         <input required type="text" class="form-control" placeholder="Username" id="username" name="username" maxlength="16" minlength="4">
         <label for="username">Username</label>
     </div>
-    <div class="form-floating">
+    <div class="form-floating w-50">
         <input required type="email" class="form-control" placeholder="Email" id="email" name="email">
         <label for="email">Email</label>
     </div>
     
     <!-- Bank Number Field -->
-    <div class="form-floating mb-3">
+    <div class="form-floating w-50">
         <input required type="text" class="form-control" placeholder="Bank Number" id="banknumber" name="banknumber" maxlength="10" minlength="10">
         <label for="banknumber">Bank Number</label>
     </div>
     
     <!-- Bank Name Field -->
-    <div class="form-floating mb-3">
+    <div class="form-floating w-50">
         <select required class="form-control" id="bankname" name="bankname">
             <option value="" disabled selected>Select Bank</option>
             <option value="ธนาคารกรุงเทพ">Bangkok Bank</option>
@@ -38,15 +38,15 @@
         </select>
         <label for="bankname">Bank Name</label>
     </div>
-    <div class="form-floating">
+    <div class="form-floating w-50">
         <input required type="password" class="form-control" placeholder="Password" id="password1" name="password1">
         <label for="password">Password</label>
     </div>
-    <div class="form-floating">
+    <div class="form-floating w-50">
         <input required type="password" class="form-control" placeholder="Confirm Password" id="password2" name="password2">
         <label for="password">Confirm Password</label>
     </div>
-    <button type="submit" class="btn btn-primary px-4">Signup</button>
+    <button type="submit" class="btn btn-primary px-4 w-25">Signup</button>
     <a href="{% url 'lotto:login' %}">Already have an account?</a>
 </form>
 {% endblock %}

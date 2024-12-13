@@ -2,7 +2,7 @@
 {% block content %}
     <div class="d-flex flex-column w-100 h-100 align-items-center g-10 pt-2">
         {% if user.is_authenticated %}
-            <h4>ห้องที่ {{ room.id }} รอบ {{ round.date }}</h4>
+            <h4>ห้องที่ {{ room.id }} งวด {{ round.date }}</h4>
             {% if lottos_bought %}
                 <p>เงินรางวัลของแต่ละหมายเลขจะถูก update หลังการประกาศรางวัล</p>
                 <div class="card d-flex flex-column align-items-center g-05 p-3 w-25">

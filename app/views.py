@@ -332,12 +332,27 @@ class StatView(View):
     success_url=reverse_lazy('lotto:main')
     def get(self, request, mode = 2, query = False):
         stats = []
+        stats2 = get_stats_table("prize_2digits")
+        stats3_pre = get_stats_table("prize_pre_3digits")
+        stats3_post = get_stats_table("prize_sub_3digits")
+        stats_all = []
         sixth = request.GET.get("sixth")
         fifth = request.GET.get("fifth")
         fourth = request.GET.get("fourth")
         third = request.GET.get("third")
         second = request.GET.get("second")
         first = request.GET.get("first")
+
+        if(mode == 2):
+            stats_all = [
+                {"mode": "เลขท้าย 2 ตัว", "stats": stats2}
+            ]
+        elif(mode == 3):
+            stats_all = [
+                {"mode": "เลขท้าย 3 ตัว", "stats": stats3_post},
+                {"mode": "เลขหน้า 3 ตัว", "stats": stats3_pre},
+            ]
+
         if(mode == 2 and sixth and fifth):
             query = True
             lotto = str(fifth) + str(sixth)
@@ -357,13 +372,14 @@ class StatView(View):
         ctx = {
             "mode": mode,
             "stats": stats,
+            "stats_all": stats_all,
             "query": query,
             "sixth": sixth,
             "fifth": fifth,
             "fourth": fourth,
             "third": third,
             "second": second,
-            "first": first
+            "first": first,
         }
         return render(request, self.template_name, ctx)
 
@@ -456,6 +472,13 @@ def get_stats(lotto):
         result = cursor.fetchall()
     # result alone card rebel
     stats = [{"type": row[0], "count": row[1]} for row in result]
+    return stats
+
+def get_stats_table(type):
+    with connection.cursor() as cursor:
+        cursor.execute(" CALL getLottoStatsTable(%s)", (type,))
+        result = cursor.fetchall()
+    stats = [{"lotto": row[0], "count": row[1]} for row in result]
     return stats
 
 def get_latest_round():

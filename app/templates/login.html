@@ -5,18 +5,18 @@
             <p>{{ error }}</p>
         {% endfor %}
     {% endif %}
-    <form method="POST" actione="." id="login-form" class="d-flex flex-column align-items-center g-10 py-4 px-5 card">
+    <form method="POST" actione="." id="login-form" class="d-flex flex-column align-items-center g-10 py-4 px-5 card w-50">
         {% csrf_token %}
         <h3>Login</h3>
-        <div class="form-floating">
+        <div class="form-floating w-50">
             <input required type="text" class="form-control" placeholder="Username" id="username" name="username" maxlength="16" minlength="4">
             <label for="username">Username</label>
         </div>
-        <div class="form-floating">
+        <div class="form-floating w-50">
             <input required type="password" class="form-control" placeholder="Password" id="password" name="password">
             <label for="password">Password</label>
         </div>
-        <button type="submit" class="btn btn-primary px-4">Login</button>
+        <button type="submit" class="btn btn-primary px-4 w-50">Login</button>
         <a href="{% url 'lotto:signup' %}">Don't have an account?</a>
     </form>
 {% endblock %}

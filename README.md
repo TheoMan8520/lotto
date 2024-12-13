@@ -212,30 +212,7 @@ END
 
 ## คำอธิบาย stored procedure 
 คร่าว ๆ มีบางอันที่ไม่ได้ใช้แล้ว แต่เก็บไว้ก่อนเผื่อดึงมาใช้อีก
-2. สำหรับ admin เรียกดูในหน้า transactions
-```bash
-CREATE PROCEDURE `getPendingTransactions`()
-BEGIN
-	select *
-    from app_transaction
-    where (status = "รอการยืนยันการชำระเงิน" or status = "การชำระเงินไม่สำเร็จ")
-    and round_bought_id = (select id from app_round order by id DESC limit 1);
-END
-```
-2.2 สำหรับ user เรียกดูในหน้า transactions
-```bash
-CREATE PROCEDURE `getPendingTransactionsUser`(
-    IN uid int
-)
-BEGIN
-	select *
-    from app_transaction
-    where (status = "รอการยืนยันการชำระเงิน" or status = "การชำระเงินไม่สำเร็จ")
-    and round_bought_id = (select id from app_round order by id DESC limit 1)
-    and user_id = uid;
-END
-```
-3. สำหรับทั่วไป เรียกดูในหน้า buy lotto
+1. สำหรับทั่วไป เรียกดูในหน้า buy lotto
 ```bash
 CREATE PROCEDURE `getPendingLottos`(
 	IN round_id int,
@@ -251,30 +228,7 @@ BEGIN
     order by count desc;
 END
 ```
-4. สำหรับ admin เรียกดูในหน้า transactions
-```bash
-CREATE PROCEDURE `getSuccessfulTransactions`()
-BEGIN
-    select *
-    from app_transaction
-    where status = "คำสั่งซื้อสำเร็จ"
-    and round_bought_id = (select id from app_round order by id DESC limit 1);
-END
-```
-4.4 สำหรับ user เรียกดูในหน้า transactions
-```bash
-CREATE PROCEDURE `getSuccessfulTransactionsUser`(
-    IN uid int
-)
-BEGIN
-    select *
-    from app_transaction
-    where status = "คำสั่งซื้อสำเร็จ"
-    and round_bought_id = (select id from app_round order by id DESC limit 1)
-    and user_id = uid;
-END
-```
-5. สำหรับทั่วไป เรียกดูในหน้า buy lotto
+2. สำหรับทั่วไป เรียกดูในหน้า buy lotto
 ```bash
 CREATE PROCEDURE `getSuccessfulLottos`(
 	IN round_id int,
@@ -290,7 +244,7 @@ BEGIN
     order by count desc;
 END
 ```
-6. ดูว่า lotto นี้รอบนี้ซื้อไปเท่าไหร่แล้ว
+3. ดูว่า lotto นี้รอบนี้ซื้อไปเท่าไหร่แล้ว
 ```bash
 CREATE PROCEDURE `getSharesSumLotto`(
 	IN lotto_num VARCHAR(3)
@@ -302,7 +256,7 @@ BEGIN
     and round_bought_id = (select id from app_round order by id DESC limit 1);
 END
 ```
-7. ดูว่าห้องนี้ รอบนี้ซื้อไปเท่าไหร่แล้ว
+4. ดูว่าห้องนี้ รอบนี้ซื้อไปเท่าไหร่แล้ว
 ```bash
 CREATE PROCEDURE `getSharesSumRoom`(
 	IN round_id int,
@@ -315,7 +269,7 @@ BEGIN
     and round_bought_id = round_id;
 END
 ```
-8. ดูว่ารอบนี้ ห้องนี้ ซื้อไปเท่าไหร่แล้ว
+5. ดูว่ารอบนี้ ห้องนี้ ซื้อไปเท่าไหร่แล้ว
 ```bash
 CREATE PROCEDURE `getShareOwn` (
 	IN uid INT,
@@ -328,7 +282,7 @@ BEGIN
     where user_id = uid and round_bought_id = round_id and room_id = room_in;
 END
 ```
-9. ดูว่าห้องนี้ ซื้อเลขไรไปบ้าง
+6. ดูว่าห้องนี้ ซื้อเลขไรไปบ้าง
 ```bash
 CREATE PROCEDURE `getBoughtLottos` (
 	IN uid INT,
@@ -341,7 +295,7 @@ BEGIN
     where user_id = uid and round_bought_id = round_id and room_id = room_in;
 END
 ```
-10. ใส่ Lotto Bought 
+7. ใส่ Lotto Bought 
 ```bash
 CREATE PROCEDURE `postBoughtLottos` (
 	IN lotto_num VARCHAR(6),
@@ -352,7 +306,7 @@ BEGIN
     VALUES (lotto_num, 0, room_in, (select id from app_round order by id DESC limit 1));
 END
 ```
-11. 
+8. ดูว่าห้องนี้มี lotto อะไรบ้าง
 ```bash
 CREATE PROCEDURE `getLottosRoom` (
 	IN round_id INT,
@@ -364,7 +318,7 @@ BEGIN
     where round_bought_id = round_id and room_id = room_in;
 END
 ```
-12. 
+9. เงินรางวัลในห้องนั้น
 ```bash
 CREATE PROCEDURE `getTotalPrize` (
 	IN round_id INT,
@@ -376,7 +330,7 @@ BEGIN
     where round_bought_id = round_id and room_id = room_in;
 END
 ```
-13. 
+10. user_id ทั้งหมดในห้องนั้น
 ```bash
 CREATE PROCEDURE `getUsersRoom` (
 	IN round_id INT,
@@ -388,7 +342,7 @@ BEGIN
     where round_bought_id = round_id and room_id = room_in;
 END
 ```
-14. ซื้อมาแล้ว ใส่รางวัล
+11. ซื้อมาแล้ว ใส่รางวัล
 ```bash
 CREATE PROCEDURE `postLottoPrize` (
 	IN lotto_num varchar(6),
@@ -397,6 +351,19 @@ CREATE PROCEDURE `postLottoPrize` (
 BEGIN
 	UPDATE `lotto`.`app_lottobought` 
     SET `prize` = prize_in WHERE (`lotto` = lotto_num);
+END
+```
+12. get stat ตามประเภท
+```bash
+CREATE PROCEDURE `getLottoStatsTable`(
+	IN lotto_mode TEXT
+)
+BEGIN
+    SELECT lotto, COUNT(*) AS count
+    FROM lotto_all
+    WHERE type = lotto_mode
+    GROUP BY lotto
+    ORDER BY count desc;
 END
 ```
 
